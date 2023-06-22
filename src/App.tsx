@@ -22,9 +22,6 @@ function App() {
 
   return (
     <div className="App">
-      {/* <div className="form">
-        <MyForm/>
-      </div> */}
       <h1>Notes App</h1>
       <AddNote addNote={addNote} />
       <div className="Notes">
