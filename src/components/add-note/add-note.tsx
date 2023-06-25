@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./add-note.css";
 import { NoteType, Priority } from "../notes/note-type";
 import { v4 as uuidv4 } from "uuid";
@@ -6,15 +6,33 @@ import Card from "../Card/card";
 
 type AddNoteProps = {
   addNote: (note: NoteType) => void;
+  editMode: boolean,
+  noteToBeEdited: NoteType | null,
+  updateNote: (updatedNote: NoteType) => void
 };
 function AddNote(props: AddNoteProps) {
-  console.log("props", props.addNote);
+  // console.log("props", props.addNote);
   const [text, setText] = useState("");
   const [author, setAuthor] = useState("");
   const [priority, setPriority] = useState<Priority>("low");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
+
+  const setNoteContent = (note: NoteType) => {
+    setText(note.text);
+    setAuthor(note.author);
+    setPriority(note.priority);
+  };
+
+  useEffect(() => {
+    if (props.noteToBeEdited && props.editMode) {
+      setNoteContent(props.noteToBeEdited);
+    }
+  }, [props.noteToBeEdited, props.editMode]);
+  console.log("setNoteContent", text);
+  console.log("setNoteContent", author);
+  console.log("setNoteContent", priority);
   const handleAuthor = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthor(e.target.value);
   };
@@ -23,19 +41,27 @@ function AddNote(props: AddNoteProps) {
     e.preventDefault();
     // Check if any input field has a value
     if (text !== "" || author !== "") {
-      console.log("Input fields are not empty");
-      props.addNote({
-        text,
-        author,
-        priority,
-        id: uuidv4(),
-      });
+      // console.log("Input fields are not empty");
+      if(props.editMode){
+        props.noteToBeEdited&&props.updateNote({
+          text,
+          author,
+          priority,
+          id: props.noteToBeEdited.id,
+        });
+      }else{
+        props.addNote({
+          text,
+          author,
+          priority,
+          id: uuidv4(),
+        });
+      }
       setText("");
       setAuthor("");
       setPriority("low");
       return;
-    }
-    else{
+    } else {
       alert("Please Fill the input fields");
     }
   };
@@ -66,7 +92,12 @@ function AddNote(props: AddNoteProps) {
           />
         </div>
         <div className="selectPriority">
-          <select onChange={handleSelect} name="priority" id="selectPriority" value={priority}>
+          <select
+            onChange={handleSelect}
+            name="priority"
+            id="selectPriority"
+            value={priority}
+          >
             <option value="high" className="priorityOption">
               High
             </option>
@@ -79,7 +110,7 @@ function AddNote(props: AddNoteProps) {
           </select>
         </div>
         <button className="addBtn" onClick={handleClick}>
-          Add
+          {props.editMode ? "Edit" : "Add"}
         </button>
       </form>
     </Card>

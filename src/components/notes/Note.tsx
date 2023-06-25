@@ -13,7 +13,7 @@ type NoteProps = {
   deleteNote:(id: string) => void
 };
 function Notes(props: NoteProps) {
-  console.log("Color", props.priority);
+  // console.log("Color", props.priority);
   return (
     <Card
       bgColor={props.priority && Color[props.priority]}
