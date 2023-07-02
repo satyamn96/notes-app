@@ -8,8 +8,13 @@ export type NoteType = {
   priority: Priority
 };
 
-export enum Color {
+export enum ColorLight {
   high='#F4511E',
   medium='#FFEB3B',
   low='#4CAF50'
+}
+export enum ColorDark {
+  high='#7f3e3c',
+  medium='rgb(127 120 55)',
+  low='rgb(35 75 37)'
 }

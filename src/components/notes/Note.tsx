@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./note.css";
-import { Color, Priority } from "./note-type";
+import { ColorLight,ColorDark, Priority } from "./note-type";
 import { FaTrash,FaEdit } from "react-icons/fa";
 import Card from "../Card/card";
+import { ThemeContext } from "../../context/theme/theme";
 
 type NoteProps = {
   id: string,
@@ -13,10 +14,11 @@ type NoteProps = {
   deleteNote:(id: string) => void
 };
 function Notes(props: NoteProps) {
+  const theme = useContext(ThemeContext);
   // console.log("Color", props.priority);
   return (
     <Card
-      bgColor={props.priority && Color[props.priority]}
+      bgColor={theme==='dark'? props.priority && ColorDark[props.priority] : props.priority && ColorLight[props.priority]}
       height="4"
       padding="3"
     >

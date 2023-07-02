@@ -1,68 +1,62 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import "./App.css";
-import Notes from "./components/notes/Note";
-import AllNotes from "./components/notes/data";
-// import MyForm from "./components/Form/NoteForm";
-import AddNote from "./components/add-note/add-note";
+import { ThemeContext } from "./context/theme/theme";
+import Home from "./components/pages/home/home";
+import Switch from "react-switch";
+import { FaSun, FaMoon } from "react-icons/fa";
 import { NoteType } from "./components/notes/note-type";
 
+type StateType = {
+  notes: NoteType[];
+  editMode: boolean;
+  noteToBeEdited: NoteType | null;
+};
+
 function App() {
-  const [notes, setNotes] = useState(AllNotes);
-  const [editMode, setEditMode] = useState(false);
-  const [noteToBeEdited, setNoteToBeEdited] = useState<NoteType | null>(null)
-  const addNote = (note: NoteType) => {
-    setNotes([note, ...notes]);
+  const [theme, setTheme] = useState("light");
+  const [checked, setChecked] = useState(false);
+
+  const [state, dispatch] = useReducer(
+    (state: StateType, action: { type: string; payload: any }) => {
+      switch (action.type) {
+        default:
+          return state;
+      }
+    },
+    { notes: [], editMode: false, noteToBeEdited: null }
+  );
+
+  const changeHandle = (check: boolean) => {
+    setChecked(check);
+    console.log(checked, check);
+    check ? setTheme("dark") : setTheme("light");
   };
-  
-  const updateNote = (updatedNote: NoteType)=>{
-    const index = notes.findIndex((note)=>note.id === updatedNote.id);
-    console.log('index',index);
-    const updatedNotes = [...notes];
-    updatedNotes.splice(index, 1, updatedNote); //splice(index of that element which is delete , from that point how many elements are deleted)
-    setNotes(updatedNotes);
-    setEditMode(false);
-  }
-
-  console.log("notes", notes);
-
-  const editNote = (id:string) =>{
-    console.log('edit',id);
-    const note = notes.find((note)=>note.id === id);
-    setEditMode(true);
-    if(note){
-      setNoteToBeEdited(note);  
-    }
-  }
-  const deleteNote = (id:string) =>{
-    console.log('delete',id);
-    const index = notes.findIndex((note)=>note.id === id);
-    console.log('index',index);
-    const updatedNotes = [...notes];
-    updatedNotes.splice(index, 1); //splice(index of that element which is delete , from that point how many elements are deleted)
-    setNotes(updatedNotes);
-  }
-
   return (
-    <div className="App">
-      {/* <div className="form">
-        <MyForm/>
-      </div> */}
-      <h1>Notes App : [{notes.length}] Avaliable Notes</h1>
-      <AddNote addNote={addNote} editMode={editMode} noteToBeEdited={noteToBeEdited} updateNote={updateNote} />
-      <div className="Notes">
-        {notes.map((note) => (
-          <Notes
-            key={note.id}
-            text={note.text}
-            id={note.id}
-            priority={note.priority}
-            author={note.author}
-            editNote={editNote}
-            deleteNote={deleteNote}
+    <ThemeContext.Provider value={theme}>
+      <Switch
+        onChange={changeHandle}
+        checked={checked}
+        className="react-switch"
+        checkedIcon={
+          <FaSun
+            size={26}
+            color="yellow"
+            style={{ paddingTop: "4px", paddingRight: "4px", float: "left" }}
           />
-        ))}
-      </div>
-    </div>
+        }
+        uncheckedIcon={
+          <FaMoon
+            size={26}
+            color="white"
+            style={{ paddingTop: "4px", paddingRight: "4px", float: "right" }}
+          />
+        }
+        onColor="#5c6664"
+        offColor="#000"
+        onHandleColor="#000"
+      />
+      <Home />
+    </ThemeContext.Provider>
   );
 }
 
